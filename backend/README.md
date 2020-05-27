@@ -98,3 +98,39 @@ createdb trivia_test
 psql trivia_test < trivia.psql
 python test_flaskr.py
 ```
+
+## API Endpoints Documentation
+### Getting Started
+- Backend Base URL: http://127.0.0.1:5000/
+- Frontend Base URL: http://127.0.0.1:3000/
+
+### Error Handling
+#### The error codes are as follows:
+400 – bad request
+404 – resource not found
+422 – unprocessable
+500 – internal server error
+
+### Endpoints 
+#### GET '/categories'
+- Returns all the categories
+
+#### GET '/questions'
+- Returns all the questions.
+
+#### DELETE '/questions/<question_id>'
+- Deletes a question by question_id
+
+#### POST '/questions'
+- Creates a new question.
+
+#### POST 'questions/search'
+- Returns questions that contain the search string
+
+#### GET '/categories/<int:category_id>/questions'
+- Returns questions by category using category_id
+
+#### POST '/quizzes'
+- Takes the category and previous questions in the request.
+- Return a random question that is not in previous questions.
+
