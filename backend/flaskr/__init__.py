@@ -185,24 +185,23 @@ def create_app(test_config=None):
   categories in the left column will cause only questions of that 
   category to be shown. 
   '''
-  #@app.route("/categories/<int:category_id>/questions")
-  #def get_questions_by_category(category_id):
-  #    category = Category.query.filter_by(id=category_id).one_or_none()
+  @app.route("/categories/<int:category_id>/questions")
+  def get_questions_by_category(category_id):
+      category = Category.query.filter_by(id=category_id).one_or_none()
 
-  #    if (category is None):
-  #        abort(422)
+      if (category is None):
+          abort(422)
 
-  #    questions = Question.query.filter_by(category=category_id).all()
+      questions = Question.query.filter_by(category=category_id).all()
 
-  #    paginated_questions = get_paginated_questions(request, questions)
+      paginated_questions = get_paginated_questions(request, questions, QUESTIONS_PER_PAGE)
 
-  #    return jsonify({
-  #            'success': True,
-  #            'questions': paginated_questions,
-  #            'total_questions': len(questions),
-  #            'category': category.type
-  #        })
-
+      return jsonify({
+              'success': True,
+              'questions': paginated_questions,
+              'total_questions': len(questions),
+              'category': category.type
+          })
 
   '''
   @TODO: 
@@ -215,6 +214,37 @@ def create_app(test_config=None):
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
   '''
+  @app.route('/quizzes', methods=['POST'])
+  def get_quiz_question():
+      data = request.get_json()
+      previous_questions = data.get('previous_questions')
+      quiz_category = data.get('quiz_category')
+
+      if (not quiz_category) or (not previous_questions):
+          abort(400)
+
+      if quiz_category['id'] == 0:
+          questions = Question.query.all()
+      else:
+          questions = Question.query.filter_by(category=quiz_category['id']).all()
+
+      # get a random question 
+      next_question = questions[random.randint(0, len(questions)-1)]
+
+      found = True
+      num_of_tries = 0
+      while found:
+          if next_question.id in previous_questions:
+              if num_of_tries >= len(questions) - 1: break
+              else: num_of_tries += 1
+              next_question = questions[random.randint(0, len(questions)-1)]
+          else:
+              found = False
+    
+      return jsonify({
+          'success': True,
+          'question': next_question.format()
+      }), 200
 
   '''
   @TODO: 
@@ -237,6 +267,22 @@ def create_app(test_config=None):
           "message": "Resource not found"  
       }), 404
 
+  @app.errorhandler(400)
+  def bad_request(error):
+      return jsonify({
+           'success': False,
+           'error': 400,
+           'message': 'Bad request error'
+       }), 400
+
+  @app.errorhandler(500)
+  def internal_server_error(error):
+      return jsonify({
+          'success': False,
+          'error': 500,
+          'message': 'Internal server error'
+      }), 500
+      
   return app
 
     
