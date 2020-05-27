@@ -106,10 +106,10 @@ python test_flaskr.py
 
 ### Error Handling
 #### The error codes are as follows:
-400 – bad request
-404 – resource not found
-422 – unprocessable
-500 – internal server error
+- 400 – bad request
+- 404 – resource not found
+- 422 – unprocessable
+- 500 – internal server error
 
 ### Endpoints 
 #### GET '/categories'
