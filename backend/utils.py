@@ -1,4 +1,4 @@
-def get_paginated_questions(request, questions, num_of_questions):
+def get_paginated_questions(request, questions, num_of_questions=10):
     page = request.args.get('page', 1, type=int)
     start = (page - 1) * num_of_questions
     end = start + num_of_questions
